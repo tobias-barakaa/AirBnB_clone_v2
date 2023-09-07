@@ -1,41 +1,50 @@
 #!/usr/bin/python3
-from fabric import api as fab
+"""Fabric script to distribute an archive to web servers"""
 
+import os.path
+from fabric.api import env, put, run
+
+env.hosts = ["100.25.196.36", "52.87.215.223"]
 
 def do_deploy(archive_path):
-    """Deploys the given archive to the web servers."""
-
-    # Check if the archive exists
-    if not fab.exists(archive_path):
+    """Distributes an archive to a web server."""
+    if not os.path.isfile(archive_path):
         return False
 
-    # Upload the archive to the web servers
-    fab.put(archive_path, "/tmp")
+    # Extract filename and name without extension
+    filename = os.path.basename(archive_path)
+    name = os.path.splitext(filename)[0]
 
-    # Uncompress the archive to the /data/web_static/releases/<archive filename without extension> directory on the web server
-    fab.run("mkdir -p /data/web_static/releases/{}".format(
-        archive_path.split(".tgz")[0]))
-    fab.run("tar -xzf /tmp/{} -C /data/web_static/releases/{}".format(
-        archive_path, archive_path.split(".tgz")[0]))
+    # Upload the archive to the /tmp/ directory on the server
+    if put(archive_path, "/tmp/{}".format(filename)).failed:
+        return False
 
-    # Delete the archive from the web server
-    fab.run("rm /tmp/{}".format(archive_path))
+    # Create the release directory
+    if run("mkdir -p /data/web_static/releases/{}/".format(name)).failed:
+        return False
 
-    # Delete the symbolic link /data/web_static/current from the web server
-    fab.run("rm -rf /data/web_static/current")
+    # Uncompress the archive into the release directory
+    if run("tar -xzf /tmp/{} -C /data/web_static/releases/{}/".format(filename, name)).failed:
+        return False
 
-    # Create a new the symbolic link /data/web_static/current on the web server, linked to the new version of your code (/data/web_static/releases/<archive filename without extension>)
-    fab.run("ln -s /data/web_static/releases/{} /data/web_static/current".format(
-        archive_path.split(".tgz")[0]))
+    # Remove the uploaded archive
+    if run("rm /tmp/{}".format(filename)).failed:
+        return False
+
+    # Move files from the uncompressed folder to the release folder
+    if run("mv /data/web_static/releases/{}/web_static/* /data/web_static/releases/{}/".format(name, name)).failed:
+        return False
+
+    # Remove the empty web_static directory
+    if run("rm -rf /data/web_static/releases/{}/web_static".format(name)).failed:
+        return False
+
+    # Delete the existing symbolic link
+    if run("rm -rf /data/web_static/current").failed:
+        return False
+
+    # Create a new symbolic link
+    if run("ln -s /data/web_static/releases/{}/ /data/web_static/current".format(name)).failed:
+        return False
 
     return True
-
-
-if __name__ == "__main__":
-    archive_path = "/path/to/archive.tgz"
-
-    # Deploy the archive
-    if do_deploy(archive_path):
-        print("New version deployed!")
-    else:
-        print("Failed to deploy the archive.")
