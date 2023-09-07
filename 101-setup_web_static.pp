@@ -1,46 +1,48 @@
-# Ensure Nginx is installed
+# Redo the task #0 but by using Puppet:
+
+exec {'apt-get-update':
+  command => '/usr/bin/apt-get update'
+}
+
+package {'apache2.2-common':
+  ensure  => 'absent',
+  require => Exec['apt-get-update']
+}
+
 package { 'nginx':
-  ensure => 'installed',
+  ensure  => 'installed',
+  require => Package['apache2.2-common']
 }
 
-# Create necessary directories
-file { ['/data', '/data/web_static', '/data/web_static/releases', '/data/web_static/shared', '/data/web_static/releases/test']:
-  ensure => 'directory',
+service {'nginx':
+  ensure  =>  'running',
+  require => file_line['LOCATION SETUP']
 }
 
-# Deploy a simple HTML file
-file { '/data/web_static/releases/test/index.html':
-  ensure  => 'file',
-  content => 'Holberton School for the win!',
+file { ['/data', '/data/web_static', '/data/web_static/shared', '/data/web_static/releases', '/data/web_static/releases/test'] :
+  ensure  => 'directory',
   owner   => 'ubuntu',
   group   => 'ubuntu',
-  mode    => '0644',
+  require =>  Package['nginx']
 }
 
-# Remove existing symbolic link
-file { '/data/web_static/current':
-  ensure => 'absent',
+file { '/data/web_static/releases/test/index.html':
+  ensure  => 'present',
+  content => 'Hello AirBnb',
+  require =>  Package['nginx']
 }
 
-# Create a new symbolic link
 file { '/data/web_static/current':
   ensure => 'link',
   target => '/data/web_static/releases/test',
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
+  force  => true
 }
 
-# Define an Nginx server configuration block
-file { '/etc/nginx/sites-available/default':
-  ensure  => 'file',
-  content => template('your_module/nginx_config.erb'),
+file_line { 'LOCATION SETUP ':
+  ensure  => 'present',
+  path    => '/etc/nginx/sites-enabled/default',
+  line    => 'location /hbnb_static/ { alias /data/web_static/current/; autoindex off; } location / { ',
+  match   => '^\s+location+',
   require => Package['nginx'],
   notify  => Service['nginx'],
-}
-
-# Ensure Nginx service is running and enabled
-service { 'nginx':
-  ensure  => 'running',
-  enable  => true,
-  require => Package['nginx'],
 }
