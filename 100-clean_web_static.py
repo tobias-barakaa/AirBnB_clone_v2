@@ -1,51 +1,30 @@
 #!/usr/bin/python3
-"""
-that deletes out-of-date archives,
-using the function do_clean
-"""
-exec { 'apt-get-update':
-  command => '/usr/bin/apt-get update'
-}
+# Fabfile to delete out-of-date archives.
+import os
+from fabric.api import *
 
-package { 'apache2.2-common':
-  ensure  => 'absent',
-  require => Exec['apt-get-update']
-}
+env.hosts = ["104.196.168.90", "35.196.46.172"]
 
-package { 'nginx':
-  ensure  => 'installed',
-  require => Package['apache2.2-common']
-}
 
-service { 'nginx':
-  ensure  => 'running',
-  require => File_line['LOCATION SETUP']
-}
+def do_clean(number=0):
+    """Delete out-of-date archives.
 
-file { ['/data', '/data/web_static', '/data/web_static/shared', '/data/web_static/releases', '/data/web_static/releases/test'] :
-  ensure  => 'directory',
-  owner   => 'ubuntu',
-  group   => 'ubuntu',
-  require => Package['nginx']
-}
+    Args:
+        number (int): The number of archives to keep.
 
-file { '/data/web_static/releases/test/index.html':
-  ensure  => 'present',
-  content => 'Hello AirBnb',
-  require => Package['nginx']
-}
+    If number is 0 or 1, keeps only the most recent archive. If
+    number is 2, keeps the most and second-most recent archives,
+    etc.
+    """
+    number = 1 if int(number) == 0 else int(number)
 
-file { '/data/web_static/current':
-  ensure => 'link',
-  target => '/data/web_static/releases/test',
-  force  => true
-}
+    archives = sorted(os.listdir("versions"))
+    [archives.pop() for i in range(number)]
+    with lcd("versions"):
+        [local("rm ./{}".format(a)) for a in archives]
 
-file_line { 'LOCATION SETUP':
-  ensure  => 'present',
-  path    => '/etc/nginx/sites-enabled/default',
-  line    => 'location /hbnb_static/ { alias /data/web_static/current/; autoindex off; } location / {',
-  match   => '^\s+location / \{', # Updated regular expression
-  require => Package['nginx'],
-  notify  => Service['nginx']
-}
+    with cd("/data/web_static/releases"):
+        archives = run("ls -tr").split()
+        archives = [a for a in archives if "web_static_" in a]
+        [archives.pop() for i in range(number)]
+        [run("rm -rf ./{}".format(a)) for a in archives]
