@@ -69,7 +69,6 @@ def is_number(n):
         return "Not Found", 404
 
 
-
 # Entry point to run the Flask application
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
