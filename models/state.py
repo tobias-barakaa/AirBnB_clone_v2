@@ -3,6 +3,7 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from models.base_model import BaseModel, Base
+from models import storage  # Import storage here
 
 
 class State(BaseModel, Base):
@@ -17,9 +18,9 @@ class State(BaseModel, Base):
                           cascade='all, delete-orphan', passive_deletes=True)
 
     # For FileStorage: Create a getter attribute to return City state_id
-    @property
-    def cities(self):
-        from models import storage
-        all_cities = storage.all("City")
-        return [city for city in all_cities.values()
-                if city.state_id == self.id]
+    if storage.__class__.__name__ != 'DBStorage':
+        @property
+        def cities(self):
+            all_cities = storage.all("City")
+            return [city for city in all_cities.values()
+                    if city.state_id == self.id]
