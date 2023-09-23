@@ -4,7 +4,7 @@ Flask Web Application Documentation
 """
 
 # Import the Flask module
-from flask import Flask
+from flask import Flask, escape
 
 # Create a Flask web application instance
 app = Flask(__name__)
@@ -37,7 +37,7 @@ def hbnb():
 
 
 @app.route('/c/<text>', strict_slashes=False)
-def text():
+def text(text):
     """
     Handle root = text
     
@@ -45,6 +45,7 @@ def text():
 
     :return: A message string "{text}"
     """
+    text = escape(text).replace('_', ' ')
     return f"C {text}"
 
 
