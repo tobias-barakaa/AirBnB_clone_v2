@@ -6,7 +6,7 @@ from models.base_model import BaseModel, Base
 
 
 class State(BaseModel, Base):
-    """ State class """
+    """ State classs """
     __tablename__ = 'states'  # Table name for SQLAlchemy
 
     name = Column(String(128), nullable=False)
