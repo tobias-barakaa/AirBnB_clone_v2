@@ -72,9 +72,6 @@ def is_number(n):
 @app.route('/number_template/<int:n>', strict_slashes=False)
 def is_number(n):
         return render_template('5-number.html', n=n)
-    else:
-        return "Not Found", 404
-
 
 
 # Entry point to run the Flask application
