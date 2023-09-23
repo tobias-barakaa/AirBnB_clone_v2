@@ -97,7 +97,8 @@ def is_or_or_even(n):
     """
     if isinstance(n, int):
         odd_or_even = "odd" if n % 2 != 0 else "even"
-        return render_template('6-number_odd_or_even.html', n=n, odd_or_even=odd_or_even)
+        fil = '6-number_odd_or_even.html'
+        return render_template(fil, n=n, odd_or_even=odd_or_even)
     else:
         return "Not Found", 404
 
