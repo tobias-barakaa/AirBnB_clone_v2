@@ -28,7 +28,6 @@ def hello_hbnb():
 def hbnb():
     """
     Handle root = hbnb
-    
     when a clent acces the root it returns a message "HBNB"
 
     :return: A message string "HBNB
