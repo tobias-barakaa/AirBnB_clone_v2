@@ -61,16 +61,12 @@ def python_text(text="is cool"):
     return f"Python {text}"
 
 
-@app.route('/number/<n>', strict_slashes=False)
-def python_text(n):
-    """
-    Handle root = n
-    return n only if n is a number else don't return
-
-    :return: A message string "{text}"
-    """
-    isNumber = isinstance(n, (int, float))
-    return f"{isNumber} is a number"
+@app.route('/number/<int:n>', strict_slashes=False)
+def is_number(n):
+    if isinstance(n, int):
+        return f"{n} is a number"
+    else:
+        return "Not Found", 404
 
 
 
