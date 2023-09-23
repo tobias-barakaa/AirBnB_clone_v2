@@ -16,7 +16,8 @@ def hello_hbnb():
     """
     Route Handler: hello_hbnb
 
-    This function is the handler for the root URL ("/"). When a user accesses
+    This function is the handler for the root
+    URL ("/"). When a user accesses
     the root URL, it returns a simple "Hello HBNB!" message.
 
     :return: A string message, "Hello HBNB!"
@@ -74,13 +75,16 @@ def temp_render(n):
     """
     Route Handler: is_number
 
-    This function is the handler for the '/number_template/<int:n>' route in the Flask web application.
+    This function is the handler for the '/number_template/<int:n>' route
+    in the Flask web application.
     
-    When a client accesses this route with an integer 'n', it renders an HTML template named '5-number.html'
+    When a client accesses this route with an integer 'n', it
+    renders an HTML template named '5-number.html'
     and passes the value of 'n' to the template using the 'n' parameter.
 
     :param n: An integer value provided in the URL.
-    :return: An HTML page generated from the '5-number.html' template, displaying "Number: n" where 'n' is the provided integer.
+    :return: An HTML page generated from the '5-number.html' template,
+    displaying "Number: n" where 'n' is the provided integer.
     """
     return render_template('5-number.html', n=n)
 
