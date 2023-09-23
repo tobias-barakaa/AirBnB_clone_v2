@@ -50,14 +50,14 @@ def text(text):
 @app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
 def python_text(text):
-        """
+    """
     Handle root = text
     when a clent acces the root it returns a message "{text}"
     or {default_msg} if there's no
 
     :return: A message string "{text}"
     """
-    text = escape(text).replace('_', ' ')
+    text = escape(text).replace(' ', '_')
     return f"Python {text}"
 
 
