@@ -49,7 +49,7 @@ def text(text):
 
 @app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
-def python_text(text):
+def python_text(text="is cool"):
     """
     Handle root = text
     when a clent acces the root it returns a message "{text}"
