@@ -68,7 +68,7 @@ def is_number(n):
         return f"{n} is a number"
     else:
         return "Not Found", 404
-    
+
 
 @app.route('/number_template/<int:n>', strict_slashes=False)
 def temp_render(n):
