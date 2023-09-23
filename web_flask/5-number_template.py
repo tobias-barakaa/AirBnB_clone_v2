@@ -77,7 +77,6 @@ def temp_render(n):
 
     This function is the handler for the '/number_template/<int:n>' route
     in the Flask web application.
-    
     When a client accesses this route with an integer 'n', it
     renders an HTML template named '5-number.html'
     and passes the value of 'n' to the template using the 'n' parameter.
