@@ -57,7 +57,7 @@ def python_text(text="is cool"):
 
     :return: A message string "{text}"
     """
-    text = escape(text).replace(' ', '_')
+    text = escape(text).replace('_', ' ')
     return f"Python {text}"
 
 
