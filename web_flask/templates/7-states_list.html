@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <HTML lang="en">
   <HEAD>
     <TITLE>HBNB</TITLE>
@@ -13,3 +13,18 @@
     </UL>
   </BODY>
 </HTML>
+ -->
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>HBNB</title>
+</head>
+<body>
+    <h1>States</h1>
+    <ul>
+        {% for state in states %}
+            <li>{{ state.id }}: <b>{{ state.name }}</b></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
