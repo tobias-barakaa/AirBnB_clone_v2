@@ -9,14 +9,15 @@ import sqlalchemy
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 
+
 class State(BaseModel, Base):
     """ State class """
     # Define the name of the table in the database
     __tablename__ = "states"
-    
+
     # Define a column for the state's name, which cannot be empty
     name = Column(String(128), nullable=False)
-    
+
     # Establish a one-to-many relationship with the City class
     cities = relationship("City", backref="state")
 
